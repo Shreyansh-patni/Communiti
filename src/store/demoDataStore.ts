@@ -37,6 +37,14 @@ interface DemoDataState {
   getRecommendedUsers: (userId?: string) => User[];
 }
 
+// Date reviver function to convert ISO date strings back to Date objects
+const dateReviver = (key: string, value: any) => {
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+    return new Date(value);
+  }
+  return value;
+};
+
 export const useDemoDataStore = create<DemoDataState>()(
   persist(
     (set, get) => ({
@@ -180,11 +188,17 @@ export const useDemoDataStore = create<DemoDataState>()(
     }),
     {
       name: 'demo-data-storage',
-      partialize: (state) => ({
-        // Don't persist the entire state to avoid storage limits
-        // Just store a flag indicating initialization
-        initialized: state.users.length > 0
-      })
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+          return JSON.parse(str, dateReviver);
+        },
+        setItem: (name, value) => {
+          localStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 );
