@@ -19,17 +19,12 @@ import {
   Award,
   Loader2
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/Card';
-import { AnimatedCard } from '../components/ui/AnimatedCard';
-import { InViewAnimation } from '../components/ui/InViewAnimation';
-import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Avatar } from '../components/ui/Avatar';
 import { useConnectionsStore } from '../store/connections';
 import { debounce } from '../lib/utils';
-import { slideUp, fadeIn, staggerContainer } from '../lib/animations';
 import type { User } from '../types';
 
 interface SearchFilters {
@@ -330,437 +325,330 @@ export function SearchPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <InViewAnimation animation="fadeIn">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Find People</h1>
-            <p className="text-dark-400">
-              Discover and connect with professionals in your network
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Find People</h1>
+          <p className="text-dark-400">
+            Discover and connect with professionals in your network
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center"
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            Filters
+            {hasActiveFilters && (
+              <span className="ml-2 w-2 h-2 bg-primary-500 rounded-full"></span>
+            )}
+          </Button>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex space-x-1 bg-dark-800 rounded-lg p-1">
             <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center"
+              variant={viewMode === 'list' ? 'primary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className="p-2"
             >
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-              {hasActiveFilters && (
-                <span className="ml-2 w-2 h-2 bg-primary-500 rounded-full"></span>
-              )}
+              <List className="w-4 h-4" />
             </Button>
-            
-            <div className="flex space-x-1 bg-dark-800 rounded-lg p-1">
-              <Button
-                variant={viewMode === 'list' ? 'primary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="p-2"
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'grid' ? 'primary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="p-2"
-              >
-                <Grid className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button
+              variant={viewMode === 'grid' ? 'primary' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+              className="p-2"
+            >
+              <Grid className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-      </InViewAnimation>
+      </div>
 
       {/* Search Bar */}
-      <InViewAnimation animation="slideUp" delay={0.1}>
-        <Card className="p-6">
+      <Card className="p-6">
+        <div className="relative">
           <div className="relative">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-400" />
-              <input
-                type="text"
-                placeholder="Search by name, location, or skills..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                onFocus={() => setShowSuggestions(suggestions.length > 0)}
-                className="w-full pl-12 pr-4 py-4 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg transition-all duration-200"
-              />
-            </div>
-
-            {/* Search Suggestions */}
-            <AnimatePresence>
-              {showSuggestions && suggestions.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-dark-800 border border-dark-700 rounded-xl shadow-2xl z-10"
-                >
-                  {suggestions.map((suggestion, index) => (
-                    <motion.button
-                      key={index}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => handleSearch(suggestion)}
-                      className="w-full px-4 py-3 text-left text-white hover:bg-dark-700 first:rounded-t-xl last:rounded-b-xl transition-colors"
-                    >
-                      <Search className="w-4 h-4 inline mr-3 text-dark-400" />
-                      {suggestion}
-                    </motion.button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-400" />
+            <input
+              type="text"
+              placeholder="Search by name, location, or skills..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => setShowSuggestions(suggestions.length > 0)}
+              className="w-full pl-12 pr-4 py-4 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg transition-all duration-200"
+            />
           </div>
-        </Card>
-      </InViewAnimation>
+
+          {/* Search Suggestions */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-dark-800 border border-dark-700 rounded-xl shadow-2xl z-10">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSearch(suggestion)}
+                  className="w-full px-4 py-3 text-left text-white hover:bg-dark-700 first:rounded-t-xl last:rounded-b-xl transition-colors"
+                >
+                  <Search className="w-4 h-4 inline mr-3 text-dark-400" />
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
 
       {/* Advanced Filters */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-white">Advanced Filters</h3>
-                <div className="flex items-center space-x-3">
-                  <Button variant="outline" size="sm" onClick={saveCurrentFilters}>
-                    <Bookmark className="w-4 h-4 mr-2" />
-                    Save Filters
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={clearAllFilters}>
-                    <X className="w-4 h-4 mr-2" />
-                    Clear All
-                  </Button>
-                </div>
+      {showFilters && (
+        <div>
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-white">Advanced Filters</h3>
+              <div className="flex items-center space-x-3">
+                <Button variant="outline" size="sm" onClick={saveCurrentFilters}>
+                  <Bookmark className="w-4 h-4 mr-2" />
+                  Save Filters
+                </Button>
+                <Button variant="outline" size="sm" onClick={clearAllFilters}>
+                  <X className="w-4 h-4 mr-2" />
+                  Clear All
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Location Filter */}
+              <div>
+                <label className="block text-sm font-medium text-dark-200 mb-2">
+                  <MapPin className="w-4 h-4 inline mr-2" />
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={filters.location}
+                  onChange={(e) => handleFilterChange('location', e.target.value)}
+                  placeholder="City, State, Country"
+                  className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                />
               </div>
 
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-              >
-                {/* Location Filter */}
-                <motion.div variants={slideUp}>
-                  <label className="block text-sm font-medium text-dark-200 mb-2">
-                    <MapPin className="w-4 h-4 inline mr-2" />
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    value={filters.location}
-                    onChange={(e) => handleFilterChange('location', e.target.value)}
-                    placeholder="City, State, Country"
-                    className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-                  />
-                </motion.div>
+              {/* Industry Filter */}
+              <div>
+                <label className="block text-sm font-medium text-dark-200 mb-2">
+                  <Building className="w-4 h-4 inline mr-2" />
+                  Industry
+                </label>
+                <select
+                  value={filters.industry}
+                  onChange={(e) => handleFilterChange('industry', e.target.value)}
+                  className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                >
+                  <option value="">All Industries</option>
+                  {industries.map(industry => (
+                    <option key={industry} value={industry}>{industry}</option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Industry Filter */}
-                <motion.div variants={slideUp}>
-                  <label className="block text-sm font-medium text-dark-200 mb-2">
-                    <Building className="w-4 h-4 inline mr-2" />
-                    Industry
-                  </label>
-                  <select
-                    value={filters.industry}
-                    onChange={(e) => handleFilterChange('industry', e.target.value)}
-                    className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+              {/* Experience Filter */}
+              <div>
+                <label className="block text-sm font-medium text-dark-200 mb-2">
+                  <Calendar className="w-4 h-4 inline mr-2" />
+                  Experience
+                </label>
+                <select
+                  value={filters.experience}
+                  onChange={(e) => handleFilterChange('experience', e.target.value)}
+                  className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                >
+                  <option value="">Any Experience</option>
+                  {experienceLevels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Role Filter */}
+              <div>
+                <label className="block text-sm font-medium text-dark-200 mb-2">
+                  <Briefcase className="w-4 h-4 inline mr-2" />
+                  Role/Title
+                </label>
+                <input
+                  type="text"
+                  value={filters.role}
+                  onChange={(e) => handleFilterChange('role', e.target.value)}
+                  placeholder="e.g. Software Engineer"
+                  className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                />
+              </div>
+
+              {/* Company Filter */}
+              <div>
+                <label className="block text-sm font-medium text-dark-200 mb-2">
+                  <Building className="w-4 h-4 inline mr-2" />
+                  Company
+                </label>
+                <input
+                  type="text"
+                  value={filters.company}
+                  onChange={(e) => handleFilterChange('company', e.target.value)}
+                  placeholder="Company name"
+                  className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                />
+              </div>
+            </div>
+
+            {/* Skills Filter */}
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-dark-200 mb-3">
+                <Award className="w-4 h-4 inline mr-2" />
+                Skills & Expertise
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {popularSkills.map((skill, index) => (
+                  <button
+                    key={skill}
+                    onClick={() => handleSkillToggle(skill)}
+                    className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
+                      filters.skills.includes(skill)
+                        ? 'bg-primary-500 text-white shadow-lg'
+                        : 'bg-dark-800 text-dark-300 hover:bg-dark-700 hover:text-white'
+                    }`}
                   >
-                    <option value="">All Industries</option>
-                    {industries.map(industry => (
-                      <option key={industry} value={industry}>{industry}</option>
-                    ))}
-                  </select>
-                </motion.div>
+                    {skill}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                {/* Experience Filter */}
-                <motion.div variants={slideUp}>
-                  <label className="block text-sm font-medium text-dark-200 mb-2">
-                    <Calendar className="w-4 h-4 inline mr-2" />
-                    Experience
-                  </label>
-                  <select
-                    value={filters.experience}
-                    onChange={(e) => handleFilterChange('experience', e.target.value)}
-                    className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-                  >
-                    <option value="">Any Experience</option>
-                    {experienceLevels.map(level => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </select>
-                </motion.div>
-
-                {/* Role Filter */}
-                <motion.div variants={slideUp}>
-                  <label className="block text-sm font-medium text-dark-200 mb-2">
-                    <Briefcase className="w-4 h-4 inline mr-2" />
-                    Role/Title
-                  </label>
-                  <input
-                    type="text"
-                    value={filters.role}
-                    onChange={(e) => handleFilterChange('role', e.target.value)}
-                    placeholder="e.g. Software Engineer"
-                    className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-                  />
-                </motion.div>
-
-                {/* Company Filter */}
-                <motion.div variants={slideUp}>
-                  <label className="block text-sm font-medium text-dark-200 mb-2">
-                    <Building className="w-4 h-4 inline mr-2" />
-                    Company
-                  </label>
-                  <input
-                    type="text"
-                    value={filters.company}
-                    onChange={(e) => handleFilterChange('company', e.target.value)}
-                    placeholder="Company name"
-                    className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-                  />
-                </motion.div>
-              </motion.div>
-
-              {/* Skills Filter */}
-              <motion.div 
-                className="mt-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
+            {/* Saved Filters */}
+            {savedFilters.length > 0 && (
+              <div className="mt-6">
                 <label className="block text-sm font-medium text-dark-200 mb-3">
-                  <Award className="w-4 h-4 inline mr-2" />
-                  Skills & Expertise
+                  <BookmarkCheck className="w-4 h-4 inline mr-2" />
+                  Saved Filters
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {popularSkills.map((skill, index) => (
-                    <motion.button
-                      key={skill}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + index * 0.05 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleSkillToggle(skill)}
-                      className={`px-3 py-1.5 text-sm rounded-full transition-all duration-200 ${
-                        filters.skills.includes(skill)
-                          ? 'bg-primary-500 text-white shadow-lg'
-                          : 'bg-dark-800 text-dark-300 hover:bg-dark-700 hover:text-white'
-                      }`}
+                  {savedFilters.map((filter, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        // Apply saved filter logic here
+                        console.log('Applying saved filter:', filter);
+                      }}
+                      className="px-3 py-1.5 text-sm bg-dark-800 text-dark-300 hover:bg-dark-700 hover:text-white rounded-full transition-colors"
                     >
-                      {skill}
-                    </motion.button>
+                      {filter.substring(0, 30)}...
+                    </button>
                   ))}
                 </div>
-              </motion.div>
-
-              {/* Saved Filters */}
-              {savedFilters.length > 0 && (
-                <motion.div 
-                  className="mt-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <label className="block text-sm font-medium text-dark-200 mb-3">
-                    <BookmarkCheck className="w-4 h-4 inline mr-2" />
-                    Saved Filters
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {savedFilters.map((filter, index) => (
-                      <motion.button
-                        key={index}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.6 + index * 0.1 }}
-                        whileHover={{ scale: 1.02 }}
-                        onClick={() => {
-                          // Apply saved filter logic here
-                          console.log('Applying saved filter:', filter);
-                        }}
-                        className="px-3 py-1.5 text-sm bg-dark-800 text-dark-300 hover:bg-dark-700 hover:text-white rounded-full transition-colors"
-                      >
-                        {filter.substring(0, 30)}...
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
 
       {/* Results Header */}
-      <InViewAnimation animation="fadeIn" delay={0.2}>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-white">
-              {filteredUsers.length} {filteredUsers.length === 1 ? 'person' : 'people'} found
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-white">
+            {filteredUsers.length} {filteredUsers.length === 1 ? 'person' : 'people'} found
+          </p>
+          {hasActiveFilters && (
+            <p className="text-sm text-dark-400 mt-1">
+              Showing results for your search and filters
             </p>
-            {hasActiveFilters && (
-              <p className="text-sm text-dark-400 mt-1">
-                Showing results for your search and filters
-              </p>
-            )}
-          </div>
+          )}
         </div>
-      </InViewAnimation>
+      </div>
 
       {/* Search Results */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" />
+          <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
         </div>
       ) : filteredUsers.length === 0 ? (
-        <InViewAnimation animation="fadeIn">
-          <Card className="p-12 text-center">
-            <Users className="w-16 h-16 text-dark-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No people found</h3>
-            <p className="text-dark-400 mb-6">
-              Try adjusting your search terms or filters to find more people.
-            </p>
-            <div className="space-y-2">
-              <p className="text-sm text-dark-500">Suggestions:</p>
-              <ul className="text-sm text-dark-400 space-y-1">
-                <li>• Try broader search terms</li>
-                <li>• Remove some filters</li>
-                <li>• Check for typos in your search</li>
-                <li>• Search for skills instead of specific roles</li>
-              </ul>
-            </div>
-            <Button variant="outline" onClick={clearAllFilters} className="mt-6">
-              Clear All Filters
-            </Button>
-          </Card>
-        </InViewAnimation>
+        <Card className="p-12 text-center">
+          <Users className="w-16 h-16 text-dark-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">No people found</h3>
+          <p className="text-dark-400 mb-6">
+            Try adjusting your search terms or filters to find more people.
+          </p>
+          <div className="space-y-2">
+            <p className="text-sm text-dark-500">Suggestions:</p>
+            <ul className="text-sm text-dark-400 space-y-1">
+              <li>• Try broader search terms</li>
+              <li>• Remove some filters</li>
+              <li>• Check for typos in your search</li>
+              <li>• Search for skills instead of specific roles</li>
+            </ul>
+          </div>
+          <Button variant="outline" onClick={clearAllFilters} className="mt-6">
+            Clear All Filters
+          </Button>
+        </Card>
       ) : (
-        <InViewAnimation animation="stagger">
-          <motion.div 
-            variants={staggerContainer}
-            className={viewMode === 'grid' 
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
-              : 'space-y-4'
-            }
-          >
-            {paginatedUsers.map((user, index) => (
-              <motion.div
-                key={user.id}
-                variants={slideUp}
-                transition={{ delay: index * 0.05 }}
+        <div className={viewMode === 'grid' 
+          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
+          : 'space-y-4'
+        }>
+          {paginatedUsers.map((user) => (
+            <div key={user.id}>
+              <Card 
+                className={`p-6 hover:bg-dark-800/50 transition-colors ${
+                  viewMode === 'list' ? 'flex items-center space-x-6' : 'text-center'
+                }`}
               >
-                <AnimatedCard 
-                  enableInView={false}
-                  className={`p-6 hover:bg-dark-800/50 transition-colors ${
-                    viewMode === 'list' ? 'flex items-center space-x-6' : 'text-center'
-                  }`}
-                >
-                  <div className={viewMode === 'list' ? 'flex-shrink-0' : 'mb-4'}>
-                    <Avatar
-                      src={user.avatar}
-                      alt={user.displayName}
-                      size={viewMode === 'list' ? 'lg' : 'xl'}
-                      fallback={user.displayName.charAt(0)}
-                    />
-                  </div>
+                <div className={viewMode === 'list' ? 'flex-shrink-0' : 'mb-4'}>
+                  <Avatar
+                    src={user.avatar}
+                    alt={user.displayName}
+                    size={viewMode === 'list' ? 'lg' : 'xl'}
+                    fallback={user.displayName.charAt(0)}
+                  />
+                </div>
 
-                  <div className={`flex-1 ${viewMode === 'list' ? 'min-w-0' : ''}`}>
-                    <div className={`flex items-center ${viewMode === 'list' ? 'justify-between' : 'justify-center mb-2'}`}>
-                      <div className={viewMode === 'list' ? 'min-w-0 flex-1' : ''}>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-semibold text-white truncate">
-                            {user.displayName}
-                          </h3>
-                          {user.isVerified && (
-                            <div className="w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center">
-                              <span className="text-white text-xs">✓</span>
-                            </div>
-                          )}
+                <div className={`flex-1 ${viewMode === 'list' ? 'min-w-0' : ''}`}>
+                  <div className={`flex items-center ${viewMode === 'list' ? 'justify-between' : 'justify-center mb-2'}`}>
+                    <div className={viewMode === 'list' ? 'min-w-0 flex-1' : ''}>
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-semibold text-white truncate">
+                          {user.displayName}
+                        </h3>
+                        {user.isVerified && (
+                          <div className="w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs">✓</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-primary-400 text-sm font-medium mb-1">
+                        {user.role}
+                      </p>
+                      <p className="text-dark-400 text-sm mb-2">
+                        {user.company}
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm text-dark-500 mb-3">
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>{user.location}</span>
                         </div>
-                        <p className="text-primary-400 text-sm font-medium mb-1">
-                          {user.role}
-                        </p>
-                        <p className="text-dark-400 text-sm mb-2">
-                          {user.company}
-                        </p>
-                        <div className="flex items-center space-x-4 text-sm text-dark-500 mb-3">
-                          <div className="flex items-center space-x-1">
-                            <MapPin className="w-3 h-3" />
-                            <span>{user.location}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-3 h-3 fill-current text-yellow-500" />
-                            <span>{user.rating}</span>
-                          </div>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-3 h-3 fill-current text-yellow-500" />
+                          <span>{user.rating}</span>
                         </div>
                       </div>
-
-                      {viewMode === 'list' && (
-                        <div className="flex items-center space-x-3 ml-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => window.open(`/profile/${user.username}`, '_blank')}
-                            className="flex items-center"
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            View
-                          </Button>
-                          <Button
-                            variant={isFollowing(user.id) ? 'secondary' : 'primary'}
-                            size="sm"
-                            onClick={() => handleConnect(user.id)}
-                            className="flex items-center"
-                          >
-                            <UserPlus className="w-4 h-4 mr-2" />
-                            {isFollowing(user.id) ? 'Following' : 'Connect'}
-                          </Button>
-                        </div>
-                      )}
                     </div>
 
-                    <p className="text-dark-300 text-sm mb-4 line-clamp-2">
-                      {user.bio}
-                    </p>
-
-                    {/* Skills */}
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {user.skills.slice(0, 3).map((skill, skillIndex) => (
-                        <motion.span
-                          key={skill}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.1 + skillIndex * 0.05 }}
-                          className="px-2 py-1 text-xs bg-dark-800 text-dark-300 rounded-full"
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                      {user.skills.length > 3 && (
-                        <span className="px-2 py-1 text-xs text-dark-500">
-                          +{user.skills.length - 3} more
-                        </span>
-                      )}
-                    </div>
-
-                    {viewMode === 'grid' && (
-                      <div className="flex space-x-2">
+                    {viewMode === 'list' && (
+                      <div className="flex items-center space-x-3 ml-4">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => window.open(`/profile/${user.username}`, '_blank')}
-                          className="flex-1 flex items-center justify-center"
+                          className="flex items-center"
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           View
@@ -769,7 +657,7 @@ export function SearchPage() {
                           variant={isFollowing(user.id) ? 'secondary' : 'primary'}
                           size="sm"
                           onClick={() => handleConnect(user.id)}
-                          className="flex-1 flex items-center justify-center"
+                          className="flex items-center"
                         >
                           <UserPlus className="w-4 h-4 mr-2" />
                           {isFollowing(user.id) ? 'Following' : 'Connect'}
@@ -777,66 +665,108 @@ export function SearchPage() {
                       </div>
                     )}
                   </div>
-                </AnimatedCard>
-              </motion.div>
-            ))}
-          </motion.div>
-        </InViewAnimation>
+
+                  <p className="text-dark-300 text-sm mb-4 line-clamp-2">
+                    {user.bio}
+                  </p>
+
+                  {/* Skills */}
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {user.skills.slice(0, 3).map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-2 py-1 text-xs bg-dark-800 text-dark-300 rounded-full"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                    {user.skills.length > 3 && (
+                      <span className="px-2 py-1 text-xs text-dark-500">
+                        +{user.skills.length - 3} more
+                      </span>
+                    )}
+                  </div>
+
+                  {viewMode === 'grid' && (
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(`/profile/${user.username}`, '_blank')}
+                        className="flex-1 flex items-center justify-center"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View
+                      </Button>
+                      <Button
+                        variant={isFollowing(user.id) ? 'secondary' : 'primary'}
+                        size="sm"
+                        onClick={() => handleConnect(user.id)}
+                        className="flex-1 flex items-center justify-center"
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        {isFollowing(user.id) ? 'Following' : 'Connect'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <InViewAnimation animation="fadeIn" delay={0.3}>
-          <div className="flex items-center justify-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            
-            <div className="flex items-center space-x-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const page = i + 1;
-                return (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? 'primary' : 'outline'}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-10 h-10"
-                  >
-                    {page}
-                  </Button>
-                );
-              })}
-              {totalPages > 5 && (
-                <>
-                  <span className="text-dark-400">...</span>
-                  <Button
-                    variant={currentPage === totalPages ? 'primary' : 'outline'}
-                    size="sm"
-                    onClick={() => setCurrentPage(totalPages)}
-                    className="w-10 h-10"
-                  >
-                    {totalPages}
-                  </Button>
-                </>
-              )}
-            </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
+        <div className="flex items-center justify-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const page = i + 1;
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? 'primary' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className="w-10 h-10"
+                >
+                  {page}
+                </Button>
+              );
+            })}
+            {totalPages > 5 && (
+              <>
+                <span className="text-dark-400">...</span>
+                <Button
+                  variant={currentPage === totalPages ? 'primary' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="w-10 h-10"
+                >
+                  {totalPages}
+                </Button>
+              </>
+            )}
           </div>
-        </InViewAnimation>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       )}
     </div>
   );
