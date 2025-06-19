@@ -103,6 +103,7 @@ export function HomePage() {
   const [showComposer, setShowComposer] = useState(false);
   const [showConversationComposer, setShowConversationComposer] = useState(false);
   const [hasJoinedConversation, setHasJoinedConversation] = useState(false);
+  const [displayPosts, setDisplayPosts] = useState<any[]>([]);
 
   // Initialize demo data if needed
   useEffect(() => {
@@ -116,8 +117,11 @@ export function HomePage() {
   }, [demoPosts.length, initializeDemoData]);
 
   // Use demo posts if no posts are available
-  const displayPosts = posts.length > 0 ? posts : demoPosts;
-  console.log("HomePage: Display posts count:", displayPosts.length);
+  useEffect(() => {
+    const postsToDisplay = posts.length > 0 ? posts : demoPosts;
+    console.log("HomePage: Setting display posts, count:", postsToDisplay.length);
+    setDisplayPosts(postsToDisplay);
+  }, [posts, demoPosts]);
 
   const handleCreatePost = async (content: string, attachments: File[]) => {
     await addPost(content, attachments);
@@ -552,24 +556,24 @@ export function HomePage() {
             variants={staggerContainer}
             className="space-y-6"
           >
-            {displayPosts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                variants={slideUp}
-                transition={{ delay: index * 0.1 }}
-              >
-                <EnhancedPostCard
-                  post={post}
-                  onLike={handleLike}
-                  onReply={handleReply}
-                  onRepost={handleRepost}
-                  onShare={handleShare}
-                  onBookmark={handleBookmark}
-                />
-              </motion.div>
-            ))}
-            
-            {displayPosts.length === 0 && (
+            {displayPosts && displayPosts.length > 0 ? (
+              displayPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  variants={slideUp}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <EnhancedPostCard
+                    post={post}
+                    onLike={handleLike}
+                    onReply={handleReply}
+                    onRepost={handleRepost}
+                    onShare={handleShare}
+                    onBookmark={handleBookmark}
+                  />
+                </motion.div>
+              ))
+            ) : (
               <motion.div 
                 variants={fadeIn}
                 className="text-center py-12"
