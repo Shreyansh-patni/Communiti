@@ -10,7 +10,9 @@ import {
   Search,
   X,
   LogIn,
-  LogOut
+  LogOut,
+  Layers,
+  FileText
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuthStore } from '../../store/auth';
@@ -24,6 +26,10 @@ const navigation = [
   { name: 'Events', href: '/events', icon: Calendar },
   { name: 'Chat', href: '/chat', icon: MessageCircle },
   { name: 'Trending', href: '/trending', icon: TrendingUp },
+];
+
+const adminNavigation = [
+  { name: 'Implementation Plan', href: '/implementation-plan', icon: Layers },
 ];
 
 interface SidebarProps {
@@ -134,6 +140,37 @@ export function Sidebar({ onItemClick, isMobile = false }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
+
+        {/* Admin Navigation */}
+        {isAuthenticated && (
+          <>
+            <div className="mt-8 mb-2">
+              <p className="px-3 text-xs font-semibold text-dark-500 uppercase tracking-wider">
+                Admin
+              </p>
+            </div>
+            <nav className="space-y-1">
+              {adminNavigation.map((item) => (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  onClick={handleNavClick}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors',
+                      isActive
+                        ? 'bg-primary-500/10 text-primary-400'
+                        : 'text-dark-300 hover:bg-dark-800/50 hover:text-white'
+                    )
+                  }
+                >
+                  <item.icon className="mr-3 h-4 w-4" />
+                  {item.name}
+                </NavLink>
+              ))}
+            </nav>
+          </>
+        )}
       </div>
       
       {/* Bottom Actions - Simplified */}

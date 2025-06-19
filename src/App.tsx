@@ -19,6 +19,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { SearchPage } from './pages/SearchPage';
+import { ImplementationPlanPage } from './pages/ImplementationPlanPage';
 import { AIAssistantProvider } from './components/ai/AIAssistantProvider';
 import { AIAssistant } from './components/ai/AIAssistant';
 import { useAIAssistant } from './components/ai/AIAssistantProvider';
@@ -84,6 +85,7 @@ function AppContent() {
               <Route path="search" element={<SearchPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="signup" element={<SignUpPage />} />
+              <Route path="implementation-plan" element={<ImplementationPlanPage />} />
             </Route>
           </Routes>
         </div>
